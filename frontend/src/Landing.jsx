@@ -260,42 +260,51 @@ export default function Landing({ onEnter }) {
   const sectionsRef = useRef([]);
 
   useEffect(() => {
+  const sb = createClient("https://qtcrbfmnugaduygmotyw.supabase.co", "sb_publishable_lLjEjopCTxBbaHFNcDWaGA_S1y2b7GN");
+  
+  let timer;
+
   const fetchStats = async () => {
-    const { count: fightCount } = await sb.from("matches").select("*", { count: "exact", head: true }).eq("status", "done");
-    const { count: fighterCount } = await sb.from("queue").select("*", { count: "exact", head: true });
-    const { data: matches } = await sb.from("matches").select("player1").eq("status", "done");
-    const solWagered = (fightCount || 0) * (matches?.[0]?.player1?.betSol || 0.1) * 2;
+    try {
+      const { count: fightCount } = await sb.from("matches").select("*", { count: "exact", head: true }).eq("status", "done");
+      const { count: fighterCount } = await sb.from("queue").select("*", { count: "exact", head: true });
+      const { data: solData } = await sb.from("matches").select("player1").eq("status", "done");
+      const solWagered = (solData || []).reduce((acc, m) => acc + (m.player1?.betSol || 0.1) * 2, 0);
 
-    const targets = {
-      fights: fightCount || 0,
-      sol: Math.round(solWagered * 10) / 10,
-      fighters: fighterCount || 0,
-    };
+      const targets = {
+        fights: fightCount || 0,
+        sol: Math.round(solWagered * 10) / 10,
+        fighters: fighterCount || 0,
+      };
 
-    const duration = 2000;
-    const start = Date.now();
-    const timer = setInterval(() => {
-      const elapsed = Date.now() - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 3);
-      setStats({
-        fights: Math.floor(targets.fights * ease),
-        sol: Math.floor(targets.sol * ease * 10) / 10,
-        fighters: Math.floor(targets.fighters * ease),
-      });
-      if (progress >= 1) clearInterval(timer);
-    }, 16);
+      const duration = 2000;
+      const start = Date.now();
+      timer = setInterval(() => {
+        const elapsed = Date.now() - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        setStats({
+          fights: Math.floor(targets.fights * ease),
+          sol: Math.floor(targets.sol * ease * 10) / 10,
+          fighters: Math.floor(targets.fighters * ease),
+        });
+        if (progress >= 1) clearInterval(timer);
+      }, 16);
+    } catch(e) {
+      console.error("Stats fetch failed", e);
+    }
   };
+
   fetchStats();
 
-    // Scroll reveal
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.15 });
-    document.querySelectorAll('.section-reveal').forEach(el => observer.observe(el));
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.section-reveal').forEach(el => observer.observe(el));
 
-    return () => { clearInterval(timer); observer.disconnect(); };
-  }, []);
+  return () => { clearInterval(timer); observer.disconnect(); };
+}, []);
 
   const copy = () => {
     navigator.clipboard.writeText(CA).catch(() => {});
