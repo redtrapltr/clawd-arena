@@ -191,10 +191,10 @@ app.get("/health", (_, res) => res.json({
 }));
 
 app.post("/resolve", async (req, res) => {
-  const { matchId, winnerWallet, secret } = req.body;
+  const { matchId, winnerWallet, player1Wallet, secret } = req.body;
   if (secret !== process.env.INTERNAL_SECRET) return res.status(401).json({ error: "Unauthorized" });
   try {
-    const tx = await resolveOnChain(matchId, winnerWallet);
+    const tx = await resolveOnChain(matchId, winnerWallet, player1Wallet);
     await supabase.from("matches").update({ chain_resolved: true, resolve_tx: tx, status: "done" }).eq("id", matchId);
     res.json({ success: true, tx });
   } catch (e) { res.status(500).json({ error: e.message }); }
