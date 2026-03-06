@@ -143,7 +143,7 @@ function usePhantom() {
   const fetchBal = async (pk) => {
     try {
       const { Connection, PublicKey, clusterApiUrl } = window.solanaWeb3;
-      const conn = new Connection("https://devnet.helius-rpc.com/?api-key=6b56ae36-a263-4599-a807-43a5289701dc");
+      const conn = new Connection("https://mainnet.helius-rpc.com/?api-key=6b56ae36-a263-4599-a807-43a5289701dc");
       const bal = await conn.getBalance(new PublicKey(pk));
       setBalance((bal/1e9).toFixed(3));
     } catch { setBalance("?.???"); }
@@ -167,7 +167,7 @@ function usePhantom() {
   const { Connection, PublicKey, Transaction, TransactionInstruction,
           SystemProgram, clusterApiUrl } = window.solanaWeb3;
 
-  const conn = new Connection("https://devnet.helius-rpc.com/?api-key=6b56ae36-a263-4599-a807-43a5289701dc", "confirmed");
+  const conn = new Connection("https://mainnet.helius-rpc.com/?api-key=6b56ae36-a263-4599-a807-43a5289701dc");
   const programId = new PublicKey("3ZMQYK6pfxGDemfGXXtt2KqbfRQW6C3VMbkbfhZiRCb7");
   const matchSeed = new TextEncoder().encode("match");
   const pdaId = existingPdaId || matchId;

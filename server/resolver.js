@@ -15,7 +15,7 @@ const NETWORK         = process.env.NETWORK || "devnet";
 const MATCH_SEED      = Buffer.from("match");
 const PORT            = process.env.PORT || 3001;
 
-const connection = new Connection("https://devnet.helius-rpc.com/?api-key=6b56ae36-a263-4599-a807-43a5289701dc", "confirmed");
+const connection = new Connection("https://mainnet.helius-rpc.com/?api-key=6b56ae36-a263-4599-a807-43a5289701dc", "confirmed");
 const supabase   = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 console.log(`\n⚔️  Clawd Arena Resolver`);

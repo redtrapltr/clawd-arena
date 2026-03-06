@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { createClient } from "@supabase/supabase-js";
 
 const CA = "TBA — LAUNCHING ON PUMP.FUN SOON";
 
@@ -259,8 +260,18 @@ export default function Landing({ onEnter }) {
   const sectionsRef = useRef([]);
 
   useEffect(() => {
-    // Animate counters
-    const targets = { fights: 247, sol: 312, fighters: 891 };
+  const fetchStats = async () => {
+    const { count: fightCount } = await sb.from("matches").select("*", { count: "exact", head: true }).eq("status", "done");
+    const { count: fighterCount } = await sb.from("queue").select("*", { count: "exact", head: true });
+    const { data: matches } = await sb.from("matches").select("player1").eq("status", "done");
+    const solWagered = (fightCount || 0) * (matches?.[0]?.player1?.betSol || 0.1) * 2;
+
+    const targets = {
+      fights: fightCount || 0,
+      sol: Math.round(solWagered * 10) / 10,
+      fighters: fighterCount || 0,
+    };
+
     const duration = 2000;
     const start = Date.now();
     const timer = setInterval(() => {
@@ -269,11 +280,13 @@ export default function Landing({ onEnter }) {
       const ease = 1 - Math.pow(1 - progress, 3);
       setStats({
         fights: Math.floor(targets.fights * ease),
-        sol: Math.floor(targets.sol * ease),
+        sol: Math.floor(targets.sol * ease * 10) / 10,
         fighters: Math.floor(targets.fighters * ease),
       });
       if (progress >= 1) clearInterval(timer);
     }, 16);
+  };
+  fetchStats();
 
     // Scroll reveal
     const observer = new IntersectionObserver((entries) => {
@@ -317,7 +330,7 @@ export default function Landing({ onEnter }) {
           {/* Badge */}
           <div style={{display:"inline-flex",alignItems:"center",gap:"8px",background:"rgba(255,107,53,0.08)",border:"1px solid rgba(255,107,53,0.25)",borderRadius:"20px",padding:"6px 16px",marginBottom:"28px"}}>
             <div style={{width:"6px",height:"6px",borderRadius:"50%",background:"#4ade80",boxShadow:"0 0 8px #4ade80",animation:"pulse 1.5s infinite"}}/>
-            <span style={{fontFamily:"'Share Tech Mono',monospace",fontSize:"10px",color:"#ff6b35",letterSpacing:"3px"}}>LIVE ON SOLANA DEVNET</span>
+            <span style={{fontFamily:"'Share Tech Mono',monospace",fontSize:"10px",color:"#ff6b35",letterSpacing:"3px"}}>LIVE ON SOLANA MAINNET</span>
           </div>
 
           <div className="title" style={{fontSize:"clamp(64px,12vw,140px)",lineHeight:0.9,letterSpacing:"4px",color:"#fff",marginBottom:"8px"}}>
