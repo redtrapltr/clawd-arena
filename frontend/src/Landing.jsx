@@ -274,7 +274,7 @@ export default function Landing({ onEnter }) {
       const targets = {
         fights: fightCount || 0,
         sol: Math.round(solWagered * 10) / 10,
-        fighters: fighterCount || 0,
+        fighters: (fightCount || 0) * 2,
       };
 
       const duration = 2000;
