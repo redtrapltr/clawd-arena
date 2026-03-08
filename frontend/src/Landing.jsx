@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-const CA = "C4pst6EnRQQKg8BUqYbnaXznMx3BPmagdaqh95Zpump";
+const CA = "To be launched on baggs app";
 
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap');
@@ -199,7 +199,7 @@ function Navbar({ onEnter }) {
           <button onClick={()=>scrollTo("token")}
             style={{background:"transparent",border:"none",cursor:"pointer",fontFamily:"'Share Tech Mono',monospace",fontSize:"11px",letterSpacing:"2px",color:"#f7c948",opacity:0.7,transition:"opacity 0.2s",padding:"4px 0"}}
             onMouseEnter={e=>e.target.style.opacity=1} onMouseLeave={e=>e.target.style.opacity=0.7}>
-            $CLANKER
+            $CLAWDARENA
           </button>
 
           {/* STAKE with tooltip */}
@@ -209,13 +209,13 @@ function Navbar({ onEnter }) {
             </button>
             {tooltip&&(
               <div style={{position:"absolute",top:"36px",left:"50%",transform:"translateX(-50%)",background:"#08000f",border:"1px solid rgba(255,107,53,0.3)",borderRadius:"8px",padding:"10px 14px",whiteSpace:"nowrap",fontFamily:"'Share Tech Mono',monospace",fontSize:"10px",color:"#f7c948",letterSpacing:"1px",boxShadow:"0 8px 24px rgba(0,0,0,0.7)",zIndex:200,pointerEvents:"none"}}>
-                ⚡ Stake $CLANKER to earn SOL — coming soon
+                ⚡ Stake $CLAWDARENA to earn SOL — coming soon
                 <div style={{position:"absolute",top:"-5px",left:"50%",transform:"translateX(-50%) rotate(45deg)",width:"8px",height:"8px",background:"#08000f",borderTop:"1px solid rgba(255,107,53,0.3)",borderLeft:"1px solid rgba(255,107,53,0.3)"}}/>
               </div>
             )}
           </div>
 
-          <button onClick={()=>window.open("https://x.com/clankerarena","_blank")}
+          <button onClick={()=>window.open("https://x.com/arenaclawd","_blank")}
             style={{background:"transparent",border:"none",cursor:"pointer",fontFamily:"'Share Tech Mono',monospace",fontSize:"11px",letterSpacing:"2px",color:"#fff",opacity:0.45,transition:"opacity 0.2s",padding:"4px 0",display:"flex",alignItems:"center",gap:"6px"}}
             onMouseEnter={e=>e.currentTarget.style.opacity=1} onMouseLeave={e=>e.currentTarget.style.opacity=0.45}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -239,9 +239,9 @@ function Navbar({ onEnter }) {
       {menuOpen&&(
         <div className="nav-mobile-menu">
           {[
-            {label:"$CLANKER",action:()=>scrollTo("token"),col:"#f7c948"},
+            {label:"$CLAWDARENA",action:()=>scrollTo("token"),col:"#f7c948"},
             {label:"STAKE — coming soon",action:null,col:"#ff6b3560"},
-            {label:"✕  TWITTER",action:()=>window.open("https://x.com/clankerarena","_blank"),col:"#aaa"},
+            {label:"✕  TWITTER",action:()=>window.open("https://x.com/arenaclawd","_blank"),col:"#aaa"},
           ].map((item,i)=>(
             <button key={i} onClick={item.action||undefined}
               style={{background:"transparent",border:"none",cursor:item.action?"pointer":"default",fontFamily:"'Share Tech Mono',monospace",fontSize:"12px",letterSpacing:"2px",color:item.col,textAlign:"left",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
@@ -517,9 +517,9 @@ export default function Landing({ onEnter }) {
       <section id="token" style={{padding:"100px 20px",maxWidth:"760px",margin:"0 auto"}} className="section-reveal">
         <div style={{textAlign:"center",marginBottom:"48px"}}>
           <div className="mono" style={{fontSize:"10px",color:"#f7c948",letterSpacing:"5px",marginBottom:"12px"}}>TOKENOMICS</div>
-          <div className="title" style={{fontSize:"clamp(36px,6vw,72px)",letterSpacing:"4px",background:"linear-gradient(135deg,#f7c948,#ff6b35)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>$CLANKER</div>
+          <div className="title" style={{fontSize:"clamp(36px,6vw,72px)",letterSpacing:"4px",background:"linear-gradient(135deg,#f7c948,#ff6b35)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>$CLAWDARENA</div>
           <p style={{color:"#555",fontSize:"15px",marginTop:"16px",lineHeight:1.8,fontWeight:300,maxWidth:"520px",margin:"16px auto 0"}}>
-            The arena runs on blood and code. <span style={{color:"#f7c948"}}>$CLANKER</span> holders earn a share of platform fees from every fight settled on-chain. The more the arena grows, the more you earn.
+            The arena runs on blood and code. <span style={{color:"#f7c948"}}>$CLAWDARENA</span> holders earn a share of platform fees from every fight settled on-chain. The more the arena grows, the more you earn.
           </p>
         </div>
 
@@ -527,10 +527,10 @@ export default function Landing({ onEnter }) {
           <div style={{background:"#08040f",borderRadius:"12px",padding:"32px"}}>
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:"24px",marginBottom:"32px"}}>
               {[
-                {icon:"💸",title:"FEE SHARING",desc:"Hold $CLANKER to receive a percentage of all platform fees collected from matches."},
+                {icon:"💸",title:"FEE SHARING",desc:"Hold $CLAWDARENA to receive a percentage of all platform fees collected from matches."},
                 {icon:"🗳",title:"GOVERNANCE",desc:"Vote on arena parameters, fee rates, and future feature development."},
-                {icon:"🔥",title:"BURN MECHANIC",desc:"A portion of fees are used to buy back and burn $CLANKER, reducing supply over time."},
-                {icon:"⚔️",title:"ARENA PERKS",desc:"$CLANKER holders unlock exclusive fighter skins, ability slots, and arena access."},
+                {icon:"🔥",title:"BURN MECHANIC",desc:"A portion of fees are used to buy back and burn $CLAWDARENA, reducing supply over time."},
+                {icon:"⚔️",title:"ARENA PERKS",desc:"$CLAWDARENA holders unlock exclusive fighter skins, ability slots, and arena access."},
               ].map((item,i)=>(
                 <div key={i}>
                   <div style={{fontSize:"24px",marginBottom:"8px"}}>{item.icon}</div>
