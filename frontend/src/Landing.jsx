@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-const CA = "To be launched on baggs app";
+const CA = "GcZMZtrCxdy5Bdu29htbia144qUskN5NYrh8cT4TBAGS";
 
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap');
