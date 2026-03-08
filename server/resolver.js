@@ -61,8 +61,7 @@ async function resolveOnChain(matchId, winnerWallet, player1Wallet) {
   if (!pdaInfo) throw new Error(`PDA not found for match ${matchId}`);
   console.log(`[RESOLVE] Balance: ${pdaInfo.lamports} lamports`);
 
-  const seedId = matchId.replace(/-/g, "").slice(0, 16);
-  const data = Buffer.concat([RESOLVE_DISCRIMINATOR, encodeString(seedId)]);
+  const data = Buffer.concat([RESOLVE_DISCRIMINATOR, encodeString(matchId)]);
 
   const ix = new TransactionInstruction({
     programId: PROGRAM_ID,
@@ -95,8 +94,7 @@ async function refundOnChain(matchId, player1Wallet, player2Wallet) {
   const p1       = new PublicKey(player1Wallet);
   const p2       = new PublicKey(player2Wallet || player1Wallet);
 
-  const seedId = matchId.replace(/-/g, "").slice(0, 16);
-  const data = Buffer.concat([REFUND_DISCRIMINATOR, encodeString(seedId)]);
+  const data = Buffer.concat([REFUND_DISCRIMINATOR, encodeString(matchId)]);
 
   const ix = new TransactionInstruction({
     programId: PROGRAM_ID,
