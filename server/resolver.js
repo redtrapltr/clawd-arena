@@ -95,7 +95,7 @@ async function refundOnChain(matchId, player1Wallet, player2Wallet) {
   const p1       = new PublicKey(player1Wallet);
   const p2       = new PublicKey(player2Wallet || player1Wallet);
 
-  const seedId = matchId.replace(/-/g, "");
+  const seedId = matchId.replace(/-/g, "").slice(0, 16);
   const data = Buffer.concat([REFUND_DISCRIMINATOR, encodeString(seedId)]);
 
   const ix = new TransactionInstruction({
