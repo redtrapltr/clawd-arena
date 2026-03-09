@@ -381,25 +381,29 @@ function listenForBattleResult(matchId) {
   document.getElementById('waiting-sub').textContent = 'OPPONENT FOUND - CLAUDE IS JUDGING...';
   var handled = false;
   function handleResult(m) {
-    if (handled) return; handled = true;
+    if (handled) return;
+    handled = true;
+    clearInterval(pollTimer);
     if (matchSub) { matchSub.unsubscribe(); matchSub = null; }
     startAnimation(m);
   }
   matchSub = sb.channel('br-' + matchId)
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'free_matches', filter: 'id=eq.' + matchId }, function(payload) {
-      var m = payload.new;
-      if (m.battle_result) handleResult(m);
+      if (payload.new && payload.new.battle_result) handleResult(payload.new);
     }).subscribe();
-  // Poll every 3s in case realtime fires before we subscribed
-  var pollInterval = setInterval(async function() {
-    var res = await sb.from('free_matches').select('*').eq('id', matchId).single();
-    if (res.data && res.data.battle_result) { clearInterval(pollInterval); handleResult(res.data); }
-  }, 3000);
+  // Poll every 2s — catches race where UPDATE fired before subscription was ready
+  var pollTimer = setInterval(async function() {
+    try {
+      var res = await sb.from('free_matches').select('*').eq('id', matchId).single();
+      if (res.data && res.data.battle_result) handleResult(res.data);
+    } catch(e) {}
+  }, 2000);
 }
 
 async function runBattle(match) {
   document.getElementById('waiting-sub').textContent = 'OPPONENT FOUND - CLAUDE IS JUDGING...';
-  var prompt = 'You are the CLAWD ARENA judge. Two players have each written a prompt describing their AI fighter agent. Read BOTH prompts carefully and decide who wins based on the creativity, power and logic of their agent design. The better prompt wins.\n\nRules:\n- 5 rounds. Fighter1 attacks on rounds 1,3,5. Fighter2 attacks on rounds 2,4.\n- Loser MUST reach 0 HP by round 5.\n- Honor every ability described: if a fighter can dodge, set dodged:true. If they can heal, set heal value.\n- Make actions dramatically reflect each fighter\'s described personality and powers.\n\nFIGHTER 1 - ' + match.player1_name + ': ' + match.player1_prompt + '\nFIGHTER 2 - ' + match.player2_name + ': ' + match.player2_prompt + '\n\nReturn ONLY valid JSON, no markdown:\n{"rounds":[{"round":1,"attacker":"fighter1","action":"sentence","damage":20,"dodged":false,"heal":0},{"round":2,"attacker":"fighter2","action":"sentence","damage":18,"dodged":false,"heal":0},{"round":3,"attacker":"fighter1","action":"sentence","damage":24,"dodged":false,"heal":0},{"round":4,"attacker":"fighter2","action":"sentence","damage":22,"dodged":false,"heal":0},{"round":5,"attacker":"fighter1","action":"finishing blow","damage":36,"dodged":false,"heal":0}],"winner":"fighter1","winnerHpRemaining":26,"finalBlow":"cinematic sentence","reason":"2 sentences why this prompt won"}';
+  var n1 = match.player1_name, n2 = match.player2_name;
+  var prompt = 'You are the CLAWD ARENA judge. Two players wrote prompts designing their AI fighter agents. Judge who wins based on the creativity, logic and power of their agent design.\n\nCRITICAL: Always refer to fighters by their actual names: "' + n1 + '" and "' + n2 + '". Never say "fighter1" or "fighter2" in action text or reason.\n\nRules:\n- 5 rounds. ' + n1 + ' attacks rounds 1,3,5. ' + n2 + ' attacks rounds 2,4.\n- Loser reaches exactly 0 HP by round 5.\n- Honor abilities: dodge=dodged:true, healing=heal value > 0.\n- Make each action dramatic and reflect their described personality.\n\n' + n1 + ' (fighter1): ' + match.player1_prompt + '\n' + n2 + ' (fighter2): ' + match.player2_prompt + '\n\nReturn ONLY valid JSON:\n{"rounds":[{"round":1,"attacker":"fighter1","action":"' + n1 + ' does something","damage":20,"dodged":false,"heal":0},{"round":2,"attacker":"fighter2","action":"' + n2 + ' does something","damage":18,"dodged":false,"heal":0},{"round":3,"attacker":"fighter1","action":"...","damage":24,"dodged":false,"heal":0},{"round":4,"attacker":"fighter2","action":"...","damage":22,"dodged":false,"heal":0},{"round":5,"attacker":"fighter1","action":"finishing blow","damage":36,"dodged":false,"heal":0}],"winner":"fighter1","winnerHpRemaining":26,"finalBlow":"cinematic sentence using their name","reason":"2 sentences using both fighters names explaining why ' + n1 + ' or ' + n2 + ' won"}';
   var battle;
   try {
     var r = await fetch(BATTLE_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: prompt }) });
@@ -504,7 +508,8 @@ async function startAIFight() {
 
 async function runBattleLocal(match) {
   document.getElementById('waiting-sub').textContent = 'CLAUDE IS JUDGING THE BATTLE...';
-  var prompt = 'You are the CLAWD ARENA judge. Two players have each written a prompt describing their AI fighter agent. Read BOTH prompts carefully and decide who wins based on the creativity, power and logic of their agent design. The better prompt wins.\n\nRules:\n- 5 rounds. Fighter1 attacks on rounds 1,3,5. Fighter2 attacks on rounds 2,4.\n- Loser MUST reach 0 HP by round 5.\n- Honor every ability described: if a fighter can dodge, set dodged:true. If they can heal, set heal value.\n- Make actions dramatically reflect each fighter\'s described personality and powers.\n\nFIGHTER 1 - ' + match.player1_name + ': ' + match.player1_prompt + '\nFIGHTER 2 - ' + match.player2_name + ': ' + match.player2_prompt + '\n\nReturn ONLY valid JSON, no markdown:\n{"rounds":[{"round":1,"attacker":"fighter1","action":"sentence","damage":20,"dodged":false,"heal":0},{"round":2,"attacker":"fighter2","action":"sentence","damage":18,"dodged":false,"heal":0},{"round":3,"attacker":"fighter1","action":"sentence","damage":24,"dodged":false,"heal":0},{"round":4,"attacker":"fighter2","action":"sentence","damage":22,"dodged":false,"heal":0},{"round":5,"attacker":"fighter1","action":"finishing blow","damage":36,"dodged":false,"heal":0}],"winner":"fighter1","winnerHpRemaining":26,"finalBlow":"cinematic sentence","reason":"2 sentences why this prompt won"}';
+  var n1 = match.player1_name, n2 = match.player2_name;
+  var prompt = 'You are the CLAWD ARENA judge. Two players wrote prompts designing their AI fighter agents. Judge who wins based on the creativity, logic and power of their agent design.\n\nCRITICAL: Always refer to fighters by their actual names: "' + n1 + '" and "' + n2 + '". Never say "fighter1" or "fighter2" in action text or reason.\n\nRules:\n- 5 rounds. ' + n1 + ' attacks rounds 1,3,5. ' + n2 + ' attacks rounds 2,4.\n- Loser reaches exactly 0 HP by round 5.\n- Honor abilities: dodge=dodged:true, healing=heal value > 0.\n- Make each action dramatic and reflect their described personality.\n\n' + n1 + ' (fighter1): ' + match.player1_prompt + '\n' + n2 + ' (fighter2): ' + match.player2_prompt + '\n\nReturn ONLY valid JSON:\n{"rounds":[{"round":1,"attacker":"fighter1","action":"' + n1 + ' does something","damage":20,"dodged":false,"heal":0},{"round":2,"attacker":"fighter2","action":"' + n2 + ' does something","damage":18,"dodged":false,"heal":0},{"round":3,"attacker":"fighter1","action":"...","damage":24,"dodged":false,"heal":0},{"round":4,"attacker":"fighter2","action":"...","damage":22,"dodged":false,"heal":0},{"round":5,"attacker":"fighter1","action":"finishing blow","damage":36,"dodged":false,"heal":0}],"winner":"fighter1","winnerHpRemaining":26,"finalBlow":"cinematic sentence using their name","reason":"2 sentences using both fighters names explaining why ' + n1 + ' or ' + n2 + ' won"}';
   var battle;
   try {
     var r = await fetch(BATTLE_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: prompt }) });
