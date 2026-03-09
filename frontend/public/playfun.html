@@ -108,26 +108,41 @@ body { background: #04000a; color: #fff; font-family: 'Share Tech Mono', monospa
 <div id="app">
   <div class="header">
     <div class="logo">CLAWD ARENA</div>
-    <div style="color:#1a1a2e;font-size:8px;letter-spacing:4px;margin-top:3px">REAL MATCHMAKING · FREE FIGHT</div>
+    <div style="color:#383850;font-size:8px;letter-spacing:4px;margin-top:3px">AI AGENT BATTLE · FREE FIGHT</div>
     <div class="badge">FREE TO PLAY</div>
   </div>
 
   <!-- SETUP -->
   <div id="setup">
+
+    <!-- HOW IT WORKS -->
+    <div style="margin-bottom:14px;padding:14px 16px;background:rgba(255,107,53,.04);border:1px solid rgba(255,107,53,.15);border-radius:12px">
+      <div style="font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:3px;color:#ff6b35;margin-bottom:10px">⚔ HOW IT WORKS</div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:5px 10px;font-size:9px;line-height:1.7">
+        <span style="color:#f7c948">01</span><span style="color:#666">Write a prompt describing your AI fighter — its powers, personality, fighting style</span>
+        <span style="color:#f7c948">02</span><span style="color:#666">Get matched against a real opponent or an AI challenger</span>
+        <span style="color:#f7c948">03</span><span style="color:#666"><span style="color:#fff">Claude reads BOTH prompts</span> and decides who wins based on your agent's abilities</span>
+        <span style="color:#f7c948">04</span><span style="color:#666">Watch the battle — your prompt determines every attack, dodge and special move</span>
+      </div>
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,107,53,.1);font-size:9px;color:#383850">
+        <span style="color:#14f195">PRO TIP:</span> Be creative. A fire-breathing dragon beats a generic warrior. A hacker who exploits code vulnerabilities can counter brute strength. Your words are your weapon.
+      </div>
+    </div>
+
     <div class="mode-tabs">
-      <button class="mode-tab active" id="tab-pvp" onclick="setMode('pvp')">VS REAL PLAYER</button>
-      <button class="mode-tab" id="tab-ai" onclick="setMode('ai')">VS AI OPPONENT</button>
+      <button class="mode-tab active" id="tab-pvp" onclick="setMode('pvp')">⚔ VS REAL PLAYER</button>
+      <button class="mode-tab" id="tab-ai" onclick="setMode('ai')">🤖 VS AI OPPONENT</button>
     </div>
     <div class="card" id="my-card">
       <div class="warrior-preview">
         <svg id="svg-me" width="80" height="116" viewBox="0 0 100 145" style="overflow:visible;display:inline-block"></svg>
       </div>
       <label>YOUR FIGHTER NAME</label>
-      <input id="my-name" placeholder="e.g. Shadow Blade" maxlength="24" oninput="onNameChange()"/>
-      <label style="margin-top:10px">FIGHTING STYLE AND PERSONALITY</label>
-      <textarea id="my-prompt" rows="3" placeholder="Aggressive samurai? Cunning hacker? Ancient dragon?"></textarea>
+      <input id="my-name" placeholder="e.g. Shadow Blade, Iron Phoenix, Void Hacker..." maxlength="24" oninput="onNameChange()"/>
+      <label style="margin-top:10px">DESCRIBE YOUR AI AGENT — THIS IS YOUR PROMPT</label>
+      <textarea id="my-prompt" rows="4" placeholder="Example: A cursed samurai who channels dark energy into each strike. He moves like smoke — impossible to hit twice in the same spot. His final technique dissolves the opponent's will to fight.&#10;&#10;The more detailed and creative, the stronger Claude judges your fighter."></textarea>
     </div>
-    <button class="fight-btn" id="queue-btn" onclick="handleQueue()" disabled>FILL YOUR FIGHTER FIRST</button>
+    <button class="fight-btn" id="queue-btn" onclick="handleQueue()" disabled>DESCRIBE YOUR FIGHTER FIRST</button>
     <div class="cta" style="margin-top:12px">Bet real SOL on <a href="https://clawdarena.app" target="_blank">clawdarena.app</a></div>
   </div>
 
@@ -332,7 +347,7 @@ function listenForBattleResult(matchId) {
 
 async function runBattle(match) {
   document.getElementById('waiting-sub').textContent = 'OPPONENT FOUND - CLAUDE IS JUDGING...';
-  var prompt = 'Simulate a 5-round duel. Fighter1 attacks odd rounds, fighter2 attacks even rounds. Loser reaches exactly 0 HP.\n\nFIGHTER 1 - ' + match.player1_name + ': ' + match.player1_prompt + '\nFIGHTER 2 - ' + match.player2_name + ': ' + match.player2_prompt + '\n\nReturn ONLY valid JSON no markdown:\n{"rounds":[{"round":1,"attacker":"fighter1","action":"sentence","damage":20},{"round":2,"attacker":"fighter2","action":"sentence","damage":18},{"round":3,"attacker":"fighter1","action":"sentence","damage":24,"abilityEffect":"optional"},{"round":4,"attacker":"fighter2","action":"sentence","damage":22},{"round":5,"attacker":"fighter1","action":"sentence","damage":36}],"winner":"fighter1","winnerHpRemaining":26,"finalBlow":"sentence","reason":"2 sentences"}';
+  var prompt = 'You are the CLAWD ARENA judge — a ruthless AI god that decides the fate of fighters purely based on the prompts they wrote. The player who wrote the most creative, powerful and detailed prompt wins.\n\nRules:\n- 5 rounds. Fighter1 attacks on rounds 1,3,5. Fighter2 attacks on rounds 2,4.\n- Loser MUST reach exactly 0 HP by round 5.\n- Honor every ability described: if a fighter can dodge, set dodged:true. If they can heal, set heal value.\n- Be dramatic. Make each round reflect the fighter\'s described personality and powers.\n\nFIGHTER 1 - ' + match.player1_name + ': ' + match.player1_prompt + '\nFIGHTER 2 - ' + match.player2_name + ': ' + match.player2_prompt + '\n\nReturn ONLY valid JSON, no markdown:\n{"rounds":[{"round":1,"attacker":"fighter1","action":"dramatic sentence","damage":20,"dodged":false,"heal":0},{"round":2,"attacker":"fighter2","action":"dramatic sentence","damage":18,"dodged":false,"heal":0},{"round":3,"attacker":"fighter1","action":"dramatic sentence","damage":24,"abilityEffect":"optional","dodged":false,"heal":0},{"round":4,"attacker":"fighter2","action":"dramatic sentence","damage":22,"dodged":false,"heal":0},{"round":5,"attacker":"fighter1","action":"finishing blow","damage":36,"dodged":false,"heal":0}],"winner":"fighter1","winnerHpRemaining":26,"finalBlow":"cinematic sentence","reason":"2 sentences why this prompt won"}';
   var battle;
   try {
     var r = await fetch(BATTLE_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: prompt }) });
@@ -378,8 +393,7 @@ async function startAIFight() {
 
 async function runBattleLocal(match) {
   document.getElementById('waiting-sub').textContent = 'CLAUDE IS JUDGING THE BATTLE...';
-  var prompt = 'Simulate a 5-round duel. Fighter1 attacks odd rounds, fighter2 attacks even rounds. Loser reaches exactly 0 HP.\n\nFIGHTER 1 - ' + match.player1_name + ': ' + match.player1_prompt + '\nFIGHTER 2 - ' + match.player2_name + ': ' + match.player2_prompt + '\n\nReturn ONLY valid JSON no markdown:\n{"rounds":[{"round":1,"attacker":"fighter1","action":"sentence","damage":20},{"round":2,"attacker":"fighter2","action":"sentence","damage":18},{"round":3,"attacker":"fighter1","action":"sentence","damage":24,"abilityEffect":"optional"},{"round":4,"attacker":"fighter2","action":"sentence","damage":22},{"round":5,"attacker":"fighter1","action":"sentence","damage":36}],"winner":"fighter1","winnerHpRemaining":26,"finalBlow":"sentence","reason":"2 sentences"}';
-  var battle;
+  var prompt = 'You are the CLAWD ARENA judge — a ruthless AI god that decides the fate of fighters purely based on the prompts they wrote. The player who wrote the most creative, powerful and detailed prompt wins.\n\nRules:\n- 5 rounds. Fighter1 attacks on rounds 1,3,5. Fighter2 attacks on rounds 2,4.\n- Loser MUST reach exactly 0 HP by round 5.\n- Honor every ability described: if a fighter can dodge, set dodged:true. If they can heal, set heal value.\n- Be dramatic. Make each round reflect the fighter\'s described personality and powers.\n\nFIGHTER 1 - ' + match.player1_name + ': ' + match.player1_prompt + '\nFIGHTER 2 - ' + match.player2_name + ': ' + match.player2_prompt + '\n\nReturn ONLY valid JSON, no markdown:\n{"rounds":[{"round":1,"attacker":"fighter1","action":"dramatic sentence","damage":20,"dodged":false,"heal":0},{"round":2,"attacker":"fighter2","action":"dramatic sentence","damage":18,"dodged":false,"heal":0},{"round":3,"attacker":"fighter1","action":"dramatic sentence","damage":24,"abilityEffect":"optional","dodged":false,"heal":0},{"round":4,"attacker":"fighter2","action":"dramatic sentence","damage":22,"dodged":false,"heal":0},{"round":5,"attacker":"fighter1","action":"finishing blow","damage":36,"dodged":false,"heal":0}],"winner":"fighter1","winnerHpRemaining":26,"finalBlow":"cinematic sentence","reason":"2 sentences why this prompt won"}';
   try {
     var r = await fetch(BATTLE_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: prompt }) });
     var d = await r.json();
@@ -429,9 +443,16 @@ function startAnimation(match) {
         setTimeout(function() {
           setAnim(di, 'hit');
           shakeArena();
-          hp = hp.map(function(v, idx) { return idx===di ? Math.max(0,v-sd) : v; });
-          setHP(di, hp[di]);
-          spawnDmg(di, sd);
+          var heal = round.heal || 0;
+var attHP = Math.min(100, hp[ai] + heal);
+hp = hp.map(function(v, idx) {
+  if (idx===di) return Math.max(0, v-sd);
+  if (idx===ai && heal>0) return attHP;
+  return v;
+});
+setHP(di, hp[di]);
+if (heal > 0) { setHP(ai, hp[ai]); spawnHeal(ai, heal); }
+spawnDmg(di, sd);
           addLog(round.round, ai, round.action, round.abilityEffect||null, C1.glow, C2.glow);
           setTimeout(function() { setAnim(0,'idle'); setAnim(1,'idle'); }, 500);
         }, 430);
@@ -464,6 +485,17 @@ function spawnDmg(side, val) {
   var a = document.getElementById('arena'), d = document.createElement('div');
   d.className = 'dmg-float'; d.textContent = '-'+val;
   d.style.top = '28%'; d.style.left = side===1?'60%':'18%';
+  a.appendChild(d); setTimeout(function(){d.remove();},900);
+}
+
+function spawnHeal(side, val) {
+  var a = document.getElementById('arena'), d = document.createElement('div');
+  d.className = 'dmg-float';
+  d.textContent = '+'+val;
+  d.style.color = '#14f195';
+  d.style.textShadow = '0 0 15px #14f195';
+  d.style.top = '45%';
+  d.style.left = side===0 ? '18%' : '60%';
   a.appendChild(d); setTimeout(function(){d.remove();},900);
 }
 
