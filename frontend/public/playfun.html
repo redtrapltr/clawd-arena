@@ -559,24 +559,38 @@ function startAnimation(match) {
   var loserIdx = battle.winner === 'fighter1' ? 1 : 0;
   var winnerIdx = 1 - loserIdx;
   var winHp = Math.max(5, Math.min(95, battle.winnerHpRemaining || 25));
-  // Net damage = damage received minus heals received (heals go to attacker)
-  var dmgTo = [0, 0];
-  var healTo = [0, 0];
+
+  // PRE-SIMULATE full trajectory using raw Claude values (no clamping)
+  // This gives us the true HP curve including heals
+  var rawHp = [[100], [100]];
+  var cur = [100, 100];
   battle.rounds.forEach(function(r) {
-    var ai = r.attacker==='fighter1' ? 0 : 1;
-    dmgTo[1-ai] += (r.damage || 0);
-    healTo[ai] += (r.heal || 0);
+    var atk = r.attacker==='fighter1' ? 0 : 1, def = 1-atk;
+    cur[def] -= (r.damage || 0);
+    cur[atk] += (r.heal || 0);
+    rawHp[0].push(cur[0]);
+    rawHp[1].push(cur[1]);
   });
-  var netLoser = Math.max(1, dmgTo[loserIdx] - healTo[loserIdx]);
-  var netWinner = Math.max(1, dmgTo[winnerIdx] - healTo[winnerIdx]);
-  // Scale so loser always reaches exactly 0, winner reaches exactly winHp
-  var ls = 100 / netLoser;
-  var ws = (100 - winHp) / netWinner;
+  // Linear scale: map raw trajectory so loser ends at 0, winner ends at winHp
+  // Formula: displayHp = 100 + (rawHp - 100) * scale
+  var rawLoserEnd = rawHp[loserIdx][rawHp[loserIdx].length - 1];
+  var rawWinnerEnd = rawHp[winnerIdx][rawHp[winnerIdx].length - 1];
+  var loserScale = rawLoserEnd !== 100 ? 100 / (100 - rawLoserEnd) : 1;
+  var winnerScale = rawWinnerEnd !== 100 ? (100 - winHp) / (100 - rawWinnerEnd) : 1;
+  function dispHp(rawVal, isLoser) {
+    var s = isLoser ? loserScale : winnerScale;
+    return Math.max(0, Math.min(100, Math.round(100 + (rawVal - 100) * s)));
+  }
   var hp = [100, 100];
 
   battle.rounds.forEach(function(round, i) {
     var ai = round.attacker==='fighter1'?0:1, di = 1-ai;
-    var sd = Math.round(round.damage * (di===loserIdx ? ls : ws));
+    var heal = round.heal || 0;
+    // Look up pre-computed display HP for this round
+    var newDefHp = dispHp(rawHp[di][i+1], di === loserIdx);
+    var newAtkHp = heal > 0 ? dispHp(rawHp[ai][i+1], ai === loserIdx) : hp[ai];
+    var sd = Math.max(0, hp[di] - newDefHp);
+    var scaledHeal = heal > 0 ? Math.max(0, newAtkHp - hp[ai]) : 0;
     setTimeout(function() {
       showOverlay(true, 'ROUND ' + round.round, '#ff6b35');
       setTimeout(function() { showOverlay(false, ''); }, 900);
@@ -585,16 +599,8 @@ function startAnimation(match) {
         setTimeout(function() {
           setAnim(di, 'hit');
           shakeArena();
-          var heal = round.heal || 0;
-          // Scale the heal by same factor used for that fighter's damage
-          var healScale = (ai === loserIdx) ? ls : ws;
-          var scaledHeal = heal > 0 ? Math.round(heal * healScale) : 0;
-          var attHP = Math.min(100, hp[ai] + scaledHeal);
-          hp = hp.map(function(v, idx) {
-            if (idx===di) return Math.max(0, v-sd);
-            if (idx===ai && scaledHeal>0) return attHP;
-            return v;
-          });
+          hp[di] = newDefHp;
+          hp[ai] = newAtkHp;
           setHP(di, hp[di]);
           if (scaledHeal > 0) { setHP(ai, hp[ai]); spawnHeal(ai, scaledHeal); }
           spawnDmg(di, sd);
