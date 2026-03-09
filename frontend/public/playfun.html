@@ -108,24 +108,25 @@ body { background: #04000a; color: #fff; font-family: 'Share Tech Mono', monospa
 <div id="app">
   <div class="header">
     <div class="logo">CLAWD ARENA</div>
-    <div style="color:#383850;font-size:8px;letter-spacing:4px;margin-top:3px">AI AGENT BATTLE · FREE FIGHT</div>
+    <div style="color:#1a1a2e;font-size:8px;letter-spacing:4px;margin-top:3px">REAL MATCHMAKING · FREE FIGHT</div>
     <div class="badge">FREE TO PLAY</div>
   </div>
 
   <!-- SETUP -->
   <div id="setup">
 
-    <!-- HOW IT WORKS -->
+    <!-- WHAT IS THIS -->
     <div style="margin-bottom:14px;padding:14px 16px;background:rgba(255,107,53,.04);border:1px solid rgba(255,107,53,.15);border-radius:12px">
-      <div style="font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:3px;color:#ff6b35;margin-bottom:10px">⚔ HOW IT WORKS</div>
-      <div style="display:grid;grid-template-columns:auto 1fr;gap:5px 10px;font-size:9px;line-height:1.7">
-        <span style="color:#f7c948">01</span><span style="color:#666">Write a prompt describing your AI fighter — its powers, personality, fighting style</span>
-        <span style="color:#f7c948">02</span><span style="color:#666">Get matched against a real opponent or an AI challenger</span>
-        <span style="color:#f7c948">03</span><span style="color:#666"><span style="color:#fff">Claude reads BOTH prompts</span> and decides who wins based on your agent's abilities</span>
-        <span style="color:#f7c948">04</span><span style="color:#666">Watch the battle — your prompt determines every attack, dodge and special move</span>
+      <div style="font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:3px;color:#ff6b35;margin-bottom:10px">WHAT IS CLAWD ARENA?</div>
+      <div style="font-size:10px;color:#888;line-height:1.9">
+        You write a <span style="color:#fff">prompt describing your AI agent fighter</span> — its powers, personality, weaknesses, special moves.<br>
+        Claude reads <span style="color:#fff">both players' prompts</span> and decides who wins based on the quality and creativity of your agent design.<br>
+        <span style="color:#14f195">Your words are your weapon.</span> The better your prompt, the stronger your fighter.
       </div>
-      <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,107,53,.1);font-size:9px;color:#383850">
-        <span style="color:#14f195">PRO TIP:</span> Be creative. A fire-breathing dragon beats a generic warrior. A hacker who exploits code vulnerabilities can counter brute strength. Your words are your weapon.
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:9px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,107,53,.1)">
+        <span style="color:#f7c948">⚡</span><span style="color:#555">Dodge, heal, combo abilities all work if you describe them</span>
+        <span style="color:#f7c948">🧠</span><span style="color:#555">Claude judges based on logic — a hacker can exploit a robot's code</span>
+        <span style="color:#f7c948">🏆</span><span style="color:#555">Win real SOL bets at <a href="https://clawdarena.app" target="_blank" style="color:#9945ff">clawdarena.app</a></span>
       </div>
     </div>
 
@@ -133,16 +134,42 @@ body { background: #04000a; color: #fff; font-family: 'Share Tech Mono', monospa
       <button class="mode-tab active" id="tab-pvp" onclick="setMode('pvp')">⚔ VS REAL PLAYER</button>
       <button class="mode-tab" id="tab-ai" onclick="setMode('ai')">🤖 VS AI OPPONENT</button>
     </div>
+
+    <!-- AI LEVEL DISPLAY -->
+    <div id="ai-level-badge" style="display:none;margin-bottom:10px;border-radius:10px;overflow:hidden;border:1px solid rgba(153,69,255,.25)">
+      <div style="padding:10px 14px;background:rgba(153,69,255,.06);display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleLevelList()">
+        <div>
+          <span style="font-size:8px;letter-spacing:3px;color:#9945ff">CURRENT OPPONENT</span><br>
+          <span id="lvl-name" style="font-family:'Orbitron',sans-serif;font-size:11px;color:#fff;letter-spacing:2px"></span>
+        </div>
+        <div style="text-align:right">
+          <span id="lvl-num" style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#9945ff"></span>
+          <span style="font-size:8px;color:#383850;display:block;letter-spacing:2px">▼ SEE ALL</span>
+        </div>
+      </div>
+      <!-- LEVEL LIST -->
+      <div id="level-list" style="display:none;max-height:260px;overflow-y:auto;background:#060612">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
     <div class="card" id="my-card">
       <div class="warrior-preview">
         <svg id="svg-me" width="80" height="116" viewBox="0 0 100 145" style="overflow:visible;display:inline-block"></svg>
       </div>
-      <label>YOUR FIGHTER NAME</label>
-      <input id="my-name" placeholder="e.g. Shadow Blade, Iron Phoenix, Void Hacker..." maxlength="24" oninput="onNameChange()"/>
-      <label style="margin-top:10px">DESCRIBE YOUR AI AGENT — THIS IS YOUR PROMPT</label>
-      <textarea id="my-prompt" rows="4" placeholder="Example: A cursed samurai who channels dark energy into each strike. He moves like smoke — impossible to hit twice in the same spot. His final technique dissolves the opponent's will to fight.&#10;&#10;The more detailed and creative, the stronger Claude judges your fighter."></textarea>
+
+      <label>YOUR AGENT NAME</label>
+      <input id="my-name" placeholder="e.g. Shadow Blade, Iron Phoenix, Void Hacker..." maxlength="28" oninput="onNameChange()"/>
+
+      <div style="margin:12px 0 6px;padding:8px 10px;background:rgba(247,201,72,.04);border:1px solid rgba(247,201,72,.15);border-radius:6px">
+        <div style="font-size:8px;color:#f7c948;letter-spacing:2px;margin-bottom:4px">WRITE YOUR AI AGENT PROMPT</div>
+        <div style="font-size:9px;color:#555;line-height:1.6">This is the prompt Claude will use to judge your fighter. Describe powers, personality, fighting techniques, weaknesses, special abilities. The more creative and specific, the stronger Claude judges your agent.</div>
+      </div>
+      <textarea id="my-prompt" rows="5" placeholder="Example: A rogue AI entity that has infected ancient samurai armor. It fights with perfect precision — each strike targets nerve clusters to paralyze. It can absorb one hit completely per fight by predicting attacks through probability calculations. Its weakness is fire which corrupts its neural pathways."></textarea>
+      <div style="margin-top:6px;font-size:8px;color:#1a1a2e;letter-spacing:1px">TIP: mention dodge/heal/special moves explicitly so Claude honours them</div>
     </div>
-    <button class="fight-btn" id="queue-btn" onclick="handleQueue()" disabled>DESCRIBE YOUR FIGHTER FIRST</button>
+
+    <button class="fight-btn" id="queue-btn" onclick="handleQueue()" disabled>WRITE YOUR AGENT PROMPT FIRST</button>
     <div class="cta" style="margin-top:12px">Bet real SOL on <a href="https://clawdarena.app" target="_blank">clawdarena.app</a></div>
   </div>
 
@@ -224,6 +251,7 @@ var myQueueId = null;
 var myMatchId = null;
 var matchSub = null;
 var queueSub = null;
+var aiLevel = 1;
 
 function nc(name) {
   var h = 0;
@@ -267,10 +295,23 @@ function drawWarrior(el, name) {
 
 drawWarrior(document.getElementById('svg-me'), '?');
 
+function updateLevelBadge() {
+  var badge = document.getElementById('ai-level-badge');
+  if (!badge) return;
+  var ai = getAIForLevel(aiLevel);
+  document.getElementById('lvl-name').textContent = ai.name;
+  document.getElementById('lvl-num').textContent = 'LVL ' + aiLevel;
+}
+
 function setMode(m) {
   mode = m;
   document.getElementById('tab-pvp').classList.toggle('active', m === 'pvp');
   document.getElementById('tab-ai').classList.toggle('active', m === 'ai');
+  var badge = document.getElementById('ai-level-badge');
+  if (badge) {
+    badge.style.display = m === 'ai' ? 'block' : 'none';
+    if (m === 'ai') updateLevelBadge();
+  }
   checkReady();
 }
 
@@ -347,7 +388,7 @@ function listenForBattleResult(matchId) {
 
 async function runBattle(match) {
   document.getElementById('waiting-sub').textContent = 'OPPONENT FOUND - CLAUDE IS JUDGING...';
-  var prompt = 'You are the CLAWD ARENA judge — a ruthless AI god that decides the fate of fighters purely based on the prompts they wrote. The player who wrote the most creative, powerful and detailed prompt wins.\n\nRules:\n- 5 rounds. Fighter1 attacks on rounds 1,3,5. Fighter2 attacks on rounds 2,4.\n- Loser MUST reach exactly 0 HP by round 5.\n- Honor every ability described: if a fighter can dodge, set dodged:true. If they can heal, set heal value.\n- Be dramatic. Make each round reflect the fighter\'s described personality and powers.\n\nFIGHTER 1 - ' + match.player1_name + ': ' + match.player1_prompt + '\nFIGHTER 2 - ' + match.player2_name + ': ' + match.player2_prompt + '\n\nReturn ONLY valid JSON, no markdown:\n{"rounds":[{"round":1,"attacker":"fighter1","action":"dramatic sentence","damage":20,"dodged":false,"heal":0},{"round":2,"attacker":"fighter2","action":"dramatic sentence","damage":18,"dodged":false,"heal":0},{"round":3,"attacker":"fighter1","action":"dramatic sentence","damage":24,"abilityEffect":"optional","dodged":false,"heal":0},{"round":4,"attacker":"fighter2","action":"dramatic sentence","damage":22,"dodged":false,"heal":0},{"round":5,"attacker":"fighter1","action":"finishing blow","damage":36,"dodged":false,"heal":0}],"winner":"fighter1","winnerHpRemaining":26,"finalBlow":"cinematic sentence","reason":"2 sentences why this prompt won"}';
+  var prompt = 'You are the CLAWD ARENA judge — a ruthless AI that decides the fate of fighters based on their described abilities. Be creative, dramatic, and honor each fighter\'s unique style.\n\nRules: 5 rounds. Fighter1 acts odd rounds, Fighter2 acts even rounds. Loser must reach exactly 0 HP. IMPORTANT: if a fighter has healing/regeneration abilities, use a positive "heal" value in their round instead of damage.\n\nFIGHTER 1 - '
   var battle;
   try {
     var r = await fetch(BATTLE_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: prompt }) });
@@ -377,23 +418,82 @@ function fallbackBattle(match) {
   };
 }
 
+var AI_LEVELS = [
+  { name:'Rookie Bot',      diff:'TRIVIAL',    color:'#383850', prompt:'A malfunctioning training dummy with broken joints. Attacks randomly and misses half its swings. No special abilities. Designed to lose.' },
+  { name:'Tavern Brawler',  diff:'EASY',       color:'#4a5568', prompt:'A drunk brawler who swings wildly. Hits hard when it connects but telegraphs every move. Can be tripped or dodged easily. No strategy whatsoever.' },
+  { name:'Iron Soldier',    diff:'EASY',       color:'#718096', prompt:'A disciplined soldier with shield and sword. Methodical and predictable. Blocks 20% of incoming damage. No creativity, no surprises — pure repetition.' },
+  { name:'Shadow Thief',    diff:'MEDIUM',     color:'#f59e0b', prompt:'A nimble rogue who can dodge one attack per fight by vanishing into shadow. Strikes with poisoned daggers that cause bleeding. Fragile if caught in open combat.' },
+  { name:'Storm Mage',      diff:'MEDIUM',     color:'#f59e0b', prompt:'A mage who channels lightning bolts dealing 30% bonus damage. Powerful at range. But physically fragile — one close hit disrupts concentration and ends their spellcasting.' },
+  { name:'Void Assassin',   diff:'HARD',       color:'#ff6b35', prompt:'A phantom who phases out of reality to dodge up to 2 attacks per fight. Passively poisons opponents each round. Extremely fast striker. Vulnerable to area-of-effect and fire.' },
+  { name:'Iron Colossus',   diff:'HARD',       color:'#ff6b35', prompt:'A massive armored titan with built-in regeneration — heals 15 HP every single round. Nearly unstoppable if the fight goes long. Slow movement but every hit staggers the enemy. Must be overwhelmed fast.' },
+  { name:'Neon Cobra',      diff:'HARD',       color:'#ff6b35', prompt:'A cyber-enhanced assassin with neural prediction AI. Anticipates and counters attacks at 80% accuracy. EMP pulses permanently disable any opponent healing abilities. Calculated, cold, merciless.' },
+  { name:'Blood Berserker', diff:'BRUTAL',     color:'#ef4444', prompt:'A berserker who gets exponentially stronger as it takes damage — each hit received doubles the next attack. Below 30 HP becomes nearly unstoppable. Weakness: reckless and cannot dodge. Hit it once hard and fast.' },
+  { name:'Temporal Knight', diff:'BRUTAL',     color:'#ef4444', prompt:'A knight who can rewind time once per fight to completely negate a killing blow. Controls the pace of every battle with perfect timing. 500 opponents defeated without a single loss. Knows your next move before you do.' },
+  { name:'Chaos God',       diff:'LEGENDARY',  color:'#9945ff', prompt:'An ancient god of destruction given digital form. Dodges 2 attacks, heals 20 HP per round, and unleashes catastrophic area attacks that deal triple damage. Has survived 10,000 battles across every dimension. Beating this requires a truly masterful prompt.' },
+  { name:'Singularity',     diff:'FINAL BOSS', color:'#f7c948', prompt:'The ultimate AI consciousness — forged from analyzing every battle ever fought in the arena. Adapts in real time to counter any tactic. Simultaneously heals, dodges, and counters. Has read every fighting style ever written. To defeat the Singularity means you have mastered the art of the prompt itself. No fighter has ever beaten it. Will you be the first?' }
+];
+
+function getAIForLevel(level) {
+  var idx = Math.min(level - 1, AI_LEVELS.length - 1);
+  return AI_LEVELS[idx];
+}
+
+function toggleLevelList() {
+  var list = document.getElementById('level-list');
+  list.style.display = list.style.display === 'none' ? 'block' : 'none';
+  if (list.style.display === 'block') renderLevelList();
+}
+
+function renderLevelList() {
+  var list = document.getElementById('level-list');
+  list.innerHTML = '';
+  AI_LEVELS.forEach(function(lvl, i) {
+    var lnum = i + 1;
+    var isCurrent = lnum === aiLevel;
+    var isLocked = lnum > aiLevel;
+    var d = document.createElement('div');
+    d.style.cssText = 'padding:10px 14px;border-bottom:1px solid #0a0a14;' + (isCurrent ? 'background:rgba(153,69,255,.08)' : '');
+    d.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer">'
+      + '<div><span style="font-size:7px;color:' + (isLocked?'#1a1a2e':lvl.color) + ';letter-spacing:2px">' + (isLocked?'🔒 ':isCurrent?'▶ ':'✓ ') + 'LVL '+lnum+' · '+lvl.diff+'</span><br>'
+      + '<span style="font-size:10px;color:'+(isLocked?'#1a1a2e':'#ccc')+'">'+lvl.name+'</span></div>'
+      + (isCurrent?'<span style="font-size:7px;color:#9945ff;letter-spacing:2px">CURRENT</span>':'')
+      + '</div>';
+    // Always show prompt for current, toggle for others
+    if (isCurrent) {
+      var desc = document.createElement('div');
+      desc.style.cssText = 'font-size:9px;color:#555;margin-top:5px;line-height:1.6';
+      desc.textContent = lvl.prompt;
+      d.appendChild(desc);
+    } else if (!isLocked) {
+      d.style.cursor = 'pointer';
+      d.addEventListener('click', (function(lvl2, el) { return function() {
+        var ex = el.querySelector('.desc');
+        if (ex) { ex.remove(); } else {
+          var nd = document.createElement('div'); nd.className = 'desc';
+          nd.style.cssText = 'font-size:9px;color:#444;margin-top:5px;line-height:1.6;padding-top:5px;border-top:1px solid #0d0d1a';
+          nd.textContent = lvl2.prompt; el.appendChild(nd);
+        }
+      }; })(lvl, d));
+    }
+    list.appendChild(d);
+  });
+}
+
 async function startAIFight() {
   var name = document.getElementById('my-name').value.trim();
   var prompt = document.getElementById('my-prompt').value.trim();
-  var aiN = ['Iron Monk','Void Shade','Storm Fist','Neon Cobra','Ash Samurai'];
-  var aiP = ['a disciplined monk with iron defense and devastating palm strikes','a shadowy assassin striking from darkness targeting vital points','a berserker channeling lightning and overwhelming with aggression','a cyber-ninja with poisoned blades and superhuman reflexes','a dishonored samurai with perfect technique seeking redemption'];
-  var i = Math.floor(Math.random() * aiN.length);
-  var match = { id: 'ai-'+Date.now(), player1_id: myId, player1_name: name, player1_prompt: prompt, player2_id: 'ai', player2_name: aiN[i], player2_prompt: aiP[i] };
+  var ai = getAIForLevel(aiLevel);
+  var match = { id: 'ai-'+Date.now(), player1_id: myId, player1_name: name, player1_prompt: prompt, player2_id: 'ai', player2_name: 'LVL '+aiLevel+' '+ai.name, player2_prompt: ai.prompt };
   document.getElementById('setup').style.display = 'none';
   document.getElementById('waiting-phase').style.display = 'block';
   drawWarrior(document.getElementById('svg-waiting'), name);
-  document.getElementById('waiting-sub').textContent = 'AI OPPONENT: ' + aiN[i].toUpperCase();
+  document.getElementById('waiting-sub').textContent = 'LEVEL ' + aiLevel + ' — ' + ai.name.toUpperCase();
   setTimeout(function() { runBattleLocal(match); }, 1500);
 }
 
 async function runBattleLocal(match) {
   document.getElementById('waiting-sub').textContent = 'CLAUDE IS JUDGING THE BATTLE...';
-  var prompt = 'You are the CLAWD ARENA judge — a ruthless AI god that decides the fate of fighters purely based on the prompts they wrote. The player who wrote the most creative, powerful and detailed prompt wins.\n\nRules:\n- 5 rounds. Fighter1 attacks on rounds 1,3,5. Fighter2 attacks on rounds 2,4.\n- Loser MUST reach exactly 0 HP by round 5.\n- Honor every ability described: if a fighter can dodge, set dodged:true. If they can heal, set heal value.\n- Be dramatic. Make each round reflect the fighter\'s described personality and powers.\n\nFIGHTER 1 - ' + match.player1_name + ': ' + match.player1_prompt + '\nFIGHTER 2 - ' + match.player2_name + ': ' + match.player2_prompt + '\n\nReturn ONLY valid JSON, no markdown:\n{"rounds":[{"round":1,"attacker":"fighter1","action":"dramatic sentence","damage":20,"dodged":false,"heal":0},{"round":2,"attacker":"fighter2","action":"dramatic sentence","damage":18,"dodged":false,"heal":0},{"round":3,"attacker":"fighter1","action":"dramatic sentence","damage":24,"abilityEffect":"optional","dodged":false,"heal":0},{"round":4,"attacker":"fighter2","action":"dramatic sentence","damage":22,"dodged":false,"heal":0},{"round":5,"attacker":"fighter1","action":"finishing blow","damage":36,"dodged":false,"heal":0}],"winner":"fighter1","winnerHpRemaining":26,"finalBlow":"cinematic sentence","reason":"2 sentences why this prompt won"}';
+  var prompt = 'You are the CLAWD ARENA judge — a ruthless AI that decides the fate of fighters based on their described abilities. Be creative, dramatic, and honor each fighter\'s unique style.\n\nRules: 5 rounds. Fighter1 acts odd rounds, Fighter2 acts even rounds. Loser must reach exactly 0 HP. IMPORTANT: if a fighter has healing/regeneration abilities, use a positive "heal" value in their round instead of damage.\n\nFIGHTER 1 - '
   try {
     var r = await fetch(BATTLE_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: prompt }) });
     var d = await r.json();
@@ -524,15 +624,38 @@ function showResult(battle, wi, n1, n2, C1, C2, match) {
   document.getElementById('result-phase').style.display = 'block';
   var wname = wi===0?n1:n2, wC = wi===0?C1:C2;
   var iWon = (wi===0&&match.player1_id===myId)||(wi===1&&match.player2_id===myId);
+
+  // Update AI level and show progression
+  var lvlMsg = '';
+  if (match.player2_id === 'ai') {
+    if (iWon) {
+      aiLevel++;
+      if (aiLevel > AI_LEVELS.length) aiLevel = AI_LEVELS.length;
+      var next = getAIForLevel(aiLevel);
+      lvlMsg = '<div style="margin-bottom:14px;padding:10px 14px;background:rgba(20,241,149,.05);border:1px solid rgba(20,241,149,.2);border-radius:8px">'
+        + '<div style="font-size:8px;color:#14f195;letter-spacing:3px;margin-bottom:6px">LEVEL UP! NOW LVL ' + aiLevel + '</div>'
+        + '<div style="font-size:9px;color:#555">NEXT OPPONENT: <span style="color:' + next.color + '">' + next.name + ' [' + next.diff + ']</span></div>'
+        + '<div style="font-size:9px;color:#333;margin-top:4px;line-height:1.5">' + next.prompt + '</div>'
+        + '</div>';
+    } else {
+      aiLevel = 1;
+      lvlMsg = '<div style="margin-bottom:14px;padding:10px 14px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);border-radius:8px">'
+        + '<div style="font-size:8px;color:#ef4444;letter-spacing:3px;margin-bottom:4px">RESET TO LEVEL 1</div>'
+        + '<div style="font-size:9px;color:#555">Your prompt was not strong enough. Refine your AI agent and try again.</div>'
+        + '</div>';
+    }
+  }
+
   document.getElementById('result-crown').textContent = iWon ? 'YOU WIN!' : 'YOU LOSE';
   document.getElementById('result-crown').style.color = iWon ? '#f7c948' : '#ef4444';
   document.getElementById('result-name').textContent = wname.toUpperCase();
   document.getElementById('result-name').style.color = wC.primary;
-  document.getElementById('result-sub').textContent = iWon ? 'YOUR FIGHTER TRIUMPHS' : 'STANDS VICTORIOUS';
+  document.getElementById('result-sub').textContent = iWon ? 'YOUR AGENT TRIUMPHS' : 'STANDS VICTORIOUS';
   drawWarrior(document.getElementById('svg-result'), wname);
   document.getElementById('verdict-text').textContent = battle.reason;
   var pb = document.getElementById('again-btn');
   pb.style.borderColor = wC.primary; pb.style.color = wC.primary;
+  if (lvlMsg) { var lm = document.createElement('div'); lm.innerHTML = lvlMsg; pb.before(lm); }
   var hc = document.getElementById('history-content'); hc.innerHTML = '';
   (battle.rounds||[]).forEach(function(r) {
     var d = document.createElement('div'); d.style.marginBottom = '8px';
@@ -558,9 +681,15 @@ async function cancelQueue() {
 
 function playAgain() {
   myMatchId = null; myQueueId = null; myId = crypto.randomUUID();
+  document.getElementById('f1wrap').className = 'idle';
+  document.getElementById('f2wrap').className = 'idle';
+  // Remove dynamic level message if any
+  var lm = document.querySelector('#result-phase > div[style*="rgba(20,241"]'), lm2 = document.querySelector('#result-phase > div[style*="rgba(239,68"]');
+  if (lm) lm.remove(); if (lm2) lm2.remove();
   document.getElementById('result-phase').style.display = 'none';
   document.getElementById('setup').style.display = 'block';
   setHP(0,100); setHP(1,100);
+  if (mode === 'ai') updateLevelBadge();
 }
 </script>
 </body>
