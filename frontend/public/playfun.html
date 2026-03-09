@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CLAWD ARENA — Free Fight</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--orange:#ff6b35;--gold:#f7c948;--purple:#9945ff;--green:#14f195;--bg:#04000a;}
+body{background:var(--bg);color:#fff;font-family:'Share Tech Mono',monospace;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#1a1a2e}
+
+@keyframes breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes attackRight{0%{transform:translateX(0)}40%{transform:translateX(50px) scaleX(1.1)}100%{transform:translateX(0)}}
+@keyframes attackLeft{0%{transform:translateX(0)}40%{transform:translateX(-50px) scaleX(1.1)}100%{transform:translateX(0)}}
+@keyframes getHit{0%,100%{transform:translateX(0) rotate(0);filter:brightness(1)}25%{transform:translateX(-16px) rotate(-6deg);filter:brightness(5) saturate(0)}65%{transform:translateX(10px) rotate(3deg);filter:brightness(2)}}
+@keyframes winPose{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-22px) rotate(10deg)}}
+@keyframes loseFall{0%{transform:rotate(0) translateY(0);opacity:1}100%{transform:rotate(90deg) translateY(30px);opacity:.15}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes roundFlash{0%{transform:scale(.4);opacity:0}50%{transform:scale(1.15);opacity:1}80%{transform:scale(.97);opacity:1}100%{transform:scale(1);opacity:0}}
+@keyframes shake{0%,100%{transform:translate(0,0)}20%{transform:translate(-8px,4px)}40%{transform:translate(8px,-4px)}60%{transform:translate(-5px,-8px)}80%{transform:translate(5px,8px)}}
+@keyframes floatDmg{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-60px);opacity:0}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 14px #ff6b35,0 0 28px #ff6b35}50%{box-shadow:0 0 30px #ff6b35,0 0 60px #ff6b35}}
+@keyframes dotdot{0%{content:''}33%{content:'.'}66%{content:'..'}100%{content:'...'}}
+@keyframes reveal{0%{transform:scale(.55) translateY(50px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes scanline{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+
+.idle{animation:breathe 2.4s ease-in-out infinite}
+.atk-r{animation:attackRight .42s cubic-bezier(.2,.8,.4,1)}
+.atk-l{animation:attackLeft .42s cubic-bezier(.2,.8,.4,1)}
+.hit{animation:getHit .38s ease-in-out}
+.win{animation:winPose .75s ease-in-out infinite}
+.lose{animation:loseFall .65s ease-out forwards}
+.dots::after{content:'';animation:dotdot 1.2s steps(1) infinite}
+
+#app{max-width:700px;margin:0 auto;padding:16px 12px 32px;display:flex;flex-direction:column;align-items:center}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:22px;width:100%}
+.logo{font-family:'Orbitron',sans-serif;font-size:clamp(20px,6vw,32px);font-weight:900;letter-spacing:7px;background:linear-gradient(135deg,#ff6b35 0%,#f7c948 50%,#ff6b35 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 24px #ff6b3566
