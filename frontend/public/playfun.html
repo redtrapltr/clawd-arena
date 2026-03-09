@@ -366,15 +366,30 @@ async function tryMatch(myName, myPrompt) {
 }
 
 function listenForMatch() {
+  var matchFound = false;
+  async function foundMatch(matchId) {
+    if (matchFound) return;
+    matchFound = true;
+    clearInterval(queuePoll);
+    if (queueSub) { queueSub.unsubscribe(); queueSub = null; }
+    myMatchId = matchId;
+    await sb.from('free_queue').delete().eq('player_id', myId);
+    listenForBattleResult(matchId);
+  }
+  // Realtime: catch INSERT
   queueSub = sb.channel('qw-' + myId)
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'free_matches' }, async function(payload) {
       var m = payload.new;
       if (m.player1_id !== myId && m.player2_id !== myId) return;
-      myMatchId = m.id;
-      if (queueSub) { queueSub.unsubscribe(); queueSub = null; }
-      await sb.from('free_queue').delete().eq('player_id', myId);
-      listenForBattleResult(m.id);
+      foundMatch(m.id);
     }).subscribe();
+  // Poll every 2s — catches race where INSERT fires before we subscribed, or realtime is slow
+  var queuePoll = setInterval(async function() {
+    try {
+      var res = await sb.from('free_matches').select('id').or('player1_id.eq.'+myId+',player2_id.eq.'+myId).order('created_at', {ascending:false}).limit(1);
+      if (res.data && res.data.length > 0) foundMatch(res.data[0].id);
+    } catch(e) {}
+  }, 2000);
 }
 
 function listenForBattleResult(matchId) {
