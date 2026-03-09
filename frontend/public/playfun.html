@@ -557,11 +557,21 @@ function startAnimation(match) {
   setTimeout(function() { showOverlay(false, ''); }, 1200);
 
   var loserIdx = battle.winner === 'fighter1' ? 1 : 0;
+  var winnerIdx = 1 - loserIdx;
   var winHp = Math.max(5, Math.min(95, battle.winnerHpRemaining || 25));
+  // Net damage = damage received minus heals received (heals go to attacker)
   var dmgTo = [0, 0];
-  battle.rounds.forEach(function(r) { var ai = r.attacker==='fighter1'?0:1; dmgTo[1-ai] += r.damage; });
-  var ls = dmgTo[loserIdx] > 0 ? 100/dmgTo[loserIdx] : 1;
-  var ws = dmgTo[1-loserIdx] > 0 ? (100-winHp)/dmgTo[1-loserIdx] : .5;
+  var healTo = [0, 0];
+  battle.rounds.forEach(function(r) {
+    var ai = r.attacker==='fighter1' ? 0 : 1;
+    dmgTo[1-ai] += (r.damage || 0);
+    healTo[ai] += (r.heal || 0);
+  });
+  var netLoser = Math.max(1, dmgTo[loserIdx] - healTo[loserIdx]);
+  var netWinner = Math.max(1, dmgTo[winnerIdx] - healTo[winnerIdx]);
+  // Scale so loser always reaches exactly 0, winner reaches exactly winHp
+  var ls = 100 / netLoser;
+  var ws = (100 - winHp) / netWinner;
   var hp = [100, 100];
 
   battle.rounds.forEach(function(round, i) {
@@ -576,15 +586,18 @@ function startAnimation(match) {
           setAnim(di, 'hit');
           shakeArena();
           var heal = round.heal || 0;
-var attHP = Math.min(100, hp[ai] + heal);
-hp = hp.map(function(v, idx) {
-  if (idx===di) return Math.max(0, v-sd);
-  if (idx===ai && heal>0) return attHP;
-  return v;
-});
-setHP(di, hp[di]);
-if (heal > 0) { setHP(ai, hp[ai]); spawnHeal(ai, heal); }
-spawnDmg(di, sd);
+          // Scale the heal by same factor used for that fighter's damage
+          var healScale = (ai === loserIdx) ? ls : ws;
+          var scaledHeal = heal > 0 ? Math.round(heal * healScale) : 0;
+          var attHP = Math.min(100, hp[ai] + scaledHeal);
+          hp = hp.map(function(v, idx) {
+            if (idx===di) return Math.max(0, v-sd);
+            if (idx===ai && scaledHeal>0) return attHP;
+            return v;
+          });
+          setHP(di, hp[di]);
+          if (scaledHeal > 0) { setHP(ai, hp[ai]); spawnHeal(ai, scaledHeal); }
+          spawnDmg(di, sd);
           addLog(round.round, ai, round.action, round.abilityEffect||null, C1.glow, C2.glow);
           setTimeout(function() { setAnim(0,'idle'); setAnim(1,'idle'); }, 500);
         }, 430);
